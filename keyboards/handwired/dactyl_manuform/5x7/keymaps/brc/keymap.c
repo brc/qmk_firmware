@@ -90,15 +90,18 @@ enum custom_keycodes {
  */
 void td_spacemacs_save_clearhl(qk_tap_dance_state_t *state, void *user_data);
 void td_spacemacs_magit_dispatch(qk_tap_dance_state_t *state, void *user_data);
+void td_spacemacs_comint_send(qk_tap_dance_state_t *state, void *user_data);
 
 enum TD_KEYS {
     SPCM_SAV_CLR,
     SPCM_MAGIT,
+    SPCM_BASH,     // Comint send input (or send input and go to shell buffer)
 };
 
 qk_tap_dance_action_t tap_dance_actions[] = {
     [SPCM_SAV_CLR] = ACTION_TAP_DANCE_FN(td_spacemacs_save_clearhl),
     [SPCM_MAGIT]   = ACTION_TAP_DANCE_FN(td_spacemacs_magit_dispatch),
+    [SPCM_BASH]    = ACTION_TAP_DANCE_FN(td_spacemacs_comint_send),
 };
 
 
@@ -173,11 +176,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 
         // right hand
-        _______,  _______,  KC_NLCK,  _______,  _______,  _______,  TD(SPCM_MAGIT),
-        _______,  _______,  KC_P7,    KC_P8,    KC_P9,    _______,  _______,
-        _______,  KC_DEL,   KC_P4,    KC_P5,    KC_P6,    _______,  _______,
-                  _______,  KC_P1,    KC_P2,    KC_P3,    _______,  _______,
-                                      KC_TILD,  KC_PDOT,  _______,  _______,
+        _______,  _______,  KC_NLCK,  TD(SPCM_BASH),  _______,  _______,  TD(SPCM_MAGIT),
+        _______,  _______,  KC_P7,    KC_P8,          KC_P9,    _______,  _______,
+        _______,  KC_DEL,   KC_P4,    KC_P5,          KC_P6,    _______,  _______,
+                  _______,  KC_P1,    KC_P2,          KC_P3,    _______,  _______,
+                                      KC_TILD,        KC_PDOT,  _______,  _______,
 
         // Right thumb positional arguments:
         //     top to bottom
@@ -455,6 +458,21 @@ void td_spacemacs_magit_dispatch(qk_tap_dance_state_t *state, void *user_data) {
                     SS_TAP(X_M) SS_DELAY(SPACEMACS_DELAY)
                     SS_TAP(X_L) SS_DELAY(SPACEMACS_DELAY)
                     SS_TAP(X_L));
+    }
+}
+
+void td_spacemacs_comint_send(qk_tap_dance_state_t *state, void *user_data) {
+	if (state->count == 1) {
+        // SPC o r (brc/send-line-or-region)
+        SEND_STRING(SPACEMACS_LEADER
+                    SS_TAP(X_O) SS_DELAY(SPACEMACS_DELAY)
+                    SS_TAP(X_R));
+    }
+    else if (state->count == 2) {
+        // SPC o R (brc/send-line-or-region-and-go)
+        SEND_STRING(SPACEMACS_LEADER
+                    SS_TAP(X_O) SS_DELAY(SPACEMACS_DELAY)
+                    SS_LSFT(SS_TAP(X_R)));
     }
 }
 
