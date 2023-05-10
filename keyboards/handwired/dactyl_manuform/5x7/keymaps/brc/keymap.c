@@ -93,8 +93,8 @@ void td_spacemacs_magit_dispatch(qk_tap_dance_state_t *state, void *user_data);
 void td_spacemacs_comint_send(qk_tap_dance_state_t *state, void *user_data);
 
 enum TD_KEYS {
-    SPCM_SAV_CLR,
-    SPCM_MAGIT,
+    SPCM_SAV_CLR,  // Save file or Clear search highlight
+    SPCM_MAGIT,    // Magit menu or Git log
     SPCM_BASH,     // Comint send input (or send input and go to shell buffer)
 };
 
@@ -424,7 +424,7 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     case TD(SPCM_SAV_CLR):
         return 350;  // tapping timeout in ms
     case TD(SPCM_MAGIT):
-        return 225;  // tapping timeout in ms
+        return 180;  // tapping timeout in ms
     default:
         return TAPPING_TERM;
     }
@@ -435,11 +435,13 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
  */
 void td_spacemacs_save_clearhl(qk_tap_dance_state_t *state, void *user_data) {
 	if (state->count == 1) {
+        // SPC f s (Save file)
         SEND_STRING(SPACEMACS_LEADER
                     SS_TAP(X_F) SS_DELAY(SPACEMACS_DELAY)
                     SS_TAP(X_S));
     }
     else if (state->count == 2) {
+        // SPC s c (Clear search)
         SEND_STRING(SPACEMACS_LEADER
                     SS_TAP(X_S) SS_DELAY(SPACEMACS_DELAY)
                     SS_TAP(X_C));
@@ -448,11 +450,13 @@ void td_spacemacs_save_clearhl(qk_tap_dance_state_t *state, void *user_data) {
 
 void td_spacemacs_magit_dispatch(qk_tap_dance_state_t *state, void *user_data) {
 	if (state->count == 1) {
+        // SPC g m (Magit menu)
         SEND_STRING(SPACEMACS_LEADER
                     SS_TAP(X_G) SS_DELAY(SPACEMACS_DELAY)
                     SS_TAP(X_M));
     }
     else if (state->count == 2) {
+        // SPC g m l l (Git log)
         SEND_STRING(SPACEMACS_LEADER
                     SS_TAP(X_G) SS_DELAY(SPACEMACS_DELAY)
                     SS_TAP(X_M) SS_DELAY(SPACEMACS_DELAY)
