@@ -77,6 +77,7 @@ enum custom_keycodes {
     /* Emacs
      */
     EM_EVAL,  // (eval-expression)
+    EM_SNDP,  // (brc/sh-send-paragraph)
     /* See more Spacemacs keys immediately below (Tapdance configs) */
 
     /* Gmail
@@ -90,7 +91,7 @@ enum custom_keycodes {
  */
 void td_spacemacs_save_clearhl(qk_tap_dance_state_t *state, void *user_data);
 void td_spacemacs_magit_dispatch(qk_tap_dance_state_t *state, void *user_data);
-void td_spacemacs_comint_send(qk_tap_dance_state_t *state, void *user_data);
+void td_spacemacs_comint_send_line(qk_tap_dance_state_t *state, void *user_data);
 
 enum TD_KEYS {
     EM_SVCL,  // Save file or Clear search highlight
@@ -176,7 +177,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 
         // right hand
-        _______,  _______,  KC_NLCK,  TD(EM_SEND),  _______,  _______,  TD(EM_MAGT),
+        _______,  _______,  KC_NLCK,  TD(EM_SEND),  EM_SNDP,  _______,  TD(EM_MAGT),
         _______,  _______,  KC_P7,    KC_P8,        KC_P9,    _______,  _______,
         _______,  KC_DEL,   KC_P4,    KC_P5,        KC_P6,    _______,  _______,
                   _______,  KC_P1,    KC_P2,        KC_P3,    _______,  _______,
@@ -467,7 +468,7 @@ void td_spacemacs_magit_dispatch(qk_tap_dance_state_t *state, void *user_data) {
     }
 }
 
-void td_spacemacs_comint_send(qk_tap_dance_state_t *state, void *user_data) {
+void td_spacemacs_comint_send_line(qk_tap_dance_state_t *state, void *user_data) {
 	if (state->count == 1) {
         // SPC o r (brc/send-line-or-region)
         SEND_STRING(SPACEMACS_LEADER
@@ -783,6 +784,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case EM_EVAL:
         if (record->event.pressed)
             SEND_STRING(SS_LALT(SS_LSFT(SS_TAP(X_SCLN))));  // M-:
+        break;
+
+    case EM_SNDP:
+        if (record->event.pressed)
+            // SPC o p (Send current paragraph to comint)
+            SEND_STRING(SPACEMACS_LEADER
+                        SS_TAP(X_O) SS_DELAY(SPACEMACS_DELAY)
+                        SS_TAP(X_P));
         break;
 
     /*
