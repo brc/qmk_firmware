@@ -93,15 +93,15 @@ void td_spacemacs_magit_dispatch(qk_tap_dance_state_t *state, void *user_data);
 void td_spacemacs_comint_send(qk_tap_dance_state_t *state, void *user_data);
 
 enum TD_KEYS {
-    SPCM_SAV_CLR,  // Save file or Clear search highlight
-    SPCM_MAGIT,    // Magit menu or Git log
-    SPCM_BASH,     // Comint send input (or send input and go to shell buffer)
+    EM_SVCL,  // Save file or Clear search highlight
+    EM_MAGT,  // Magit menu or Git log
+    EM_SEND,  // Comint send input (or send input and go to shell buffer)
 };
 
 qk_tap_dance_action_t tap_dance_actions[] = {
-    [SPCM_SAV_CLR] = ACTION_TAP_DANCE_FN(td_spacemacs_save_clearhl),
-    [SPCM_MAGIT]   = ACTION_TAP_DANCE_FN(td_spacemacs_magit_dispatch),
-    [SPCM_BASH]    = ACTION_TAP_DANCE_FN(td_spacemacs_comint_send),
+    [EM_SVCL] = ACTION_TAP_DANCE_FN(td_spacemacs_save_clearhl),
+    [EM_MAGT] = ACTION_TAP_DANCE_FN(td_spacemacs_magit_dispatch),
+    [EM_SEND] = ACTION_TAP_DANCE_FN(td_spacemacs_comint_send_line),
 };
 
 
@@ -158,10 +158,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_NUM] = LAYOUT_5x7(
         // left hand
-        _______,  _______,  _______,  _______,  _______,           _______,  _______,
-        _______,  _______,  _______,  _______,  _______,           _______,  _______,
-        _______,  _______,  _______,  _______,  TD(SPCM_SAV_CLR),  _______,  _______,
-        _______,  _______,  _______,  _______,  _______,           _______,
+        _______,  _______,  _______,  _______,  _______,      _______,  _______,
+        _______,  _______,  _______,  _______,  _______,      _______,  _______,
+        _______,  _______,  _______,  _______,  TD(EM_SVCL),  _______,  _______,
+        _______,  _______,  _______,  _______,  _______,      _______,
         _______,  _______,  _______,  _______,
 
         // Left thumb positional arguments:
@@ -176,11 +176,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 
         // right hand
-        _______,  _______,  KC_NLCK,  TD(SPCM_BASH),  _______,  _______,  TD(SPCM_MAGIT),
-        _______,  _______,  KC_P7,    KC_P8,          KC_P9,    _______,  _______,
-        _______,  KC_DEL,   KC_P4,    KC_P5,          KC_P6,    _______,  _______,
-                  _______,  KC_P1,    KC_P2,          KC_P3,    _______,  _______,
-                                      KC_TILD,        KC_PDOT,  _______,  _______,
+        _______,  _______,  KC_NLCK,  TD(EM_SEND),  _______,  _______,  TD(EM_MAGT),
+        _______,  _______,  KC_P7,    KC_P8,        KC_P9,    _______,  _______,
+        _______,  KC_DEL,   KC_P4,    KC_P5,        KC_P6,    _______,  _______,
+                  _______,  KC_P1,    KC_P2,        KC_P3,    _______,  _______,
+                                      KC_TILD,      KC_PDOT,  _______,  _______,
 
         // Right thumb positional arguments:
         //     top to bottom
@@ -421,10 +421,12 @@ bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
  */
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-    case TD(SPCM_SAV_CLR):
+    case TD(EM_SVCL):
         return 350;  // tapping timeout in ms
-    case TD(SPCM_MAGIT):
+    case TD(EM_MAGT):
         return 180;  // tapping timeout in ms
+    case TD(EM_SEND):
+        return 250;  // tapping timeout in ms
     default:
         return TAPPING_TERM;
     }
